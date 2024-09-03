@@ -45,6 +45,56 @@
                     window.location.href = `./user.html?user_id=${user.id}`;
                 };
                 actionsCell.appendChild(editButton);
+
+                const space = document.createTextNode('\u00A0');
+                actionsCell.appendChild(space);
+
+                // Delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.innerText = 'Delete';
+                deleteButton.onclick = async () => {
+                    const confirmDelete = confirm(`Are you sure you want to delete the user with username: ${user.username}?`);
+                    if (confirmDelete) {
+                        try {
+                            const deleteResponse = await fetch('http://127.0.0.1:4001/auth/delete/user', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ username: user.username }),
+                                credentials: "include"
+                            });
+
+                            const result = await deleteResponse.json();
+
+                            if (result.ok) {
+                                alert('User deleted successfully');
+                                loadUsers();
+                            } else {
+                                alert(`Failed to delete user: ${result.message}`);
+                            }
+                        } catch (error) {
+                            console.log(error.message);
+                            alert('Failed to delete user. Please try again.');
+                        }
+                    }
+                };
+                actionsCell.appendChild(deleteButton);
+
+                // document.getElementById("delete-user-form").addEventListener("submit", async (event) => {
+                //     event.preventDefault();
+                //     const username = document.getElementById("other-username").value;
+                //     const response = await fetch(`http://localhost:4001/auth/delete/user`, {
+                //         method: "POST",
+                //         headers: {
+                //             "Content-Type": "application/json"
+                //         },
+                //         body: JSON.stringify({
+                //             username
+                //         })
+                //     });
+                        
+                // });
             });
         }
 
